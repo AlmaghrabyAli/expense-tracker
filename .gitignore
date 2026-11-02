@@ -1,0 +1,25 @@
+﻿# .NET
+bin/
+obj/
+*.user
+*.suo
+.vs/
+*.log
+appsettings.Development.json
+appsettings.Local.json
+
+# Node
+node_modules/
+dist/
+.vite/
+
+# Env and secrets
+.env
+.env.*
+!.env.example
+
+# OS / editors
+.DS_Store
+Thumbs.db
+.vscode/*
+!.vscode/extensions.json
