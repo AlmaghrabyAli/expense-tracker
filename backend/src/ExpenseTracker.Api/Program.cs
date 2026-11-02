@@ -1,6 +1,11 @@
+using System.Text;
 using ExpenseTracker.Api.Data;
 using ExpenseTracker.Api.Middleware;
+using ExpenseTracker.Api.Services;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
+using Microsoft.OpenApi;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -8,10 +13,13 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllers();
 builder.Services.AddOpenApi();
-builder.Services.AddSwaggerGen();
 
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+
+builder.Services.AddScoped<IAuthService, AuthService>();
+
+// ---------- CORS ----------
 
 var allowedOrigins = builder.Configuration
     .GetSection("Cors:AllowedOrigins")
@@ -25,11 +33,61 @@ builder.Services.AddCors(options =>
               .AllowAnyMethod());
 });
 
+// ---------- JWT authentication ----------
+
+var jwtKey = builder.Configuration["Jwt:Key"]
+    ?? throw new InvalidOperationException("Jwt:Key is not configured (use dotnet user-secrets).");
+if (jwtKey.Length < 32)
+    throw new InvalidOperationException("Jwt:Key must be at least 32 characters.");
+
+builder.Services
+    .AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+    .AddJwtBearer(options =>
+    {
+        // Keep claim names as they are in the token ("sub" stays "sub")
+        options.MapInboundClaims = false;
+
+        options.TokenValidationParameters = new TokenValidationParameters
+        {
+            ValidateIssuer = true,
+            ValidIssuer = builder.Configuration["Jwt:Issuer"],
+
+            ValidateAudience = true,
+            ValidAudience = builder.Configuration["Jwt:Audience"],
+
+            ValidateIssuerSigningKey = true,
+            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtKey)),
+
+            ValidateLifetime = true,
+            ClockSkew = TimeSpan.Zero // token expires exactly at ExpiresAt
+        };
+    });
+
+builder.Services.AddAuthorization();
+
+// ---------- Swagger (with the Authorize button) ----------
+
+builder.Services.AddSwaggerGen(options =>
+{
+    options.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+    {
+        Type = SecuritySchemeType.Http,
+        Scheme = "bearer",
+        BearerFormat = "JWT",
+        In = ParameterLocation.Header,
+        Description = "Paste only the token (without the word Bearer)."
+    });
+
+    options.AddSecurityRequirement(document => new OpenApiSecurityRequirement
+    {
+        [new OpenApiSecuritySchemeReference("Bearer", document)] = []
+    });
+});
+
 var app = builder.Build();
 
-// ---------- Middleware pipeline (الترتيب مهم) ----------
+// ---------- Middleware pipeline (order matters) ----------
 
-// أول واحد: يمسك أي خطأ يحصل في أي حاجة بعده
 app.UseMiddleware<ExceptionHandlingMiddleware>();
 
 if (app.Environment.IsDevelopment())
@@ -43,7 +101,8 @@ app.UseHttpsRedirection();
 
 app.UseCors("Frontend");
 
-app.UseAuthorization();
+app.UseAuthentication(); // who are you?  (must come BEFORE authorization)
+app.UseAuthorization();  // are you allowed?
 
 app.MapControllers();
 

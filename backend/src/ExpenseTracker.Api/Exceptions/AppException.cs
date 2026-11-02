@@ -1,0 +1,39 @@
+﻿namespace ExpenseTracker.Api.Exceptions;
+
+// Base class for "expected" errors that we throw on purpose from services.
+// The middleware converts them to a ProblemDetails response with the right status code.
+public abstract class AppException : Exception
+{
+    public int StatusCode { get; }
+    public string Title { get; }
+
+    protected AppException(int statusCode, string title, string message) : base(message)
+    {
+        StatusCode = statusCode;
+        Title = title;
+    }
+}
+
+public class BadRequestException : AppException
+{
+    public BadRequestException(string message)
+        : base(StatusCodes.Status400BadRequest, "Bad request", message) { }
+}
+
+public class UnauthorizedException : AppException
+{
+    public UnauthorizedException(string message)
+        : base(StatusCodes.Status401Unauthorized, "Unauthorized", message) { }
+}
+
+public class NotFoundException : AppException
+{
+    public NotFoundException(string message)
+        : base(StatusCodes.Status404NotFound, "Not found", message) { }
+}
+
+public class ConflictException : AppException
+{
+    public ConflictException(string message)
+        : base(StatusCodes.Status409Conflict, "Conflict", message) { }
+}
