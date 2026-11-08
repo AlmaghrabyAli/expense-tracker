@@ -44,13 +44,13 @@ export function AuthProvider({ children }) {
     const timeUntilExpiry = new Date(expirationTime).getTime() - Date.now();
     if (timeUntilExpiry <= 0) {
       clearSession();
-      toast.error(t('errors.sessionExpired'));
+      toast.error(t('errors.sessionExpired'), { id: 'session-expired' });
       return;
     }
 
     timerRef.current = setTimeout(() => {
       clearSession();
-      toast.error(t('errors.sessionExpired'));
+      toast.error(t('errors.sessionExpired'), { id: 'session-expired' });
     }, timeUntilExpiry);
   }, [clearSession, t]);
 
@@ -124,7 +124,7 @@ export function AuthProvider({ children }) {
   useEffect(() => {
     const handleExpired = () => {
       clearSession();
-      toast.error(t('errors.sessionExpired'));
+      toast.error(t('errors.sessionExpired'), { id: 'session-expired' });
     };
 
     window.addEventListener('et:session-expired', handleExpired);

@@ -104,7 +104,7 @@ export function getPreviousPeriodRange(preset, fromStr, toStr) {
   const fromDate = parseLocalDate(fromStr);
   const toDate = parseLocalDate(toStr);
   const diffTime = toDate.getTime() - fromDate.getTime();
-  const diffDays = Math.max(1, Math.round(diffTime / (1000 * 60 * 60 * 24))) + 1;
+  const diffDays = Math.round(diffTime / (1000 * 60 * 60 * 24)) + 1;
 
   const prevTo = new Date(fromDate);
   prevTo.setDate(prevTo.getDate() - 1);
