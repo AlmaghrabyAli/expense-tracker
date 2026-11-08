@@ -69,10 +69,16 @@ describe('utils/errors', () => {
   });
 
   describe('getLocalizedErrorMessage', () => {
-    it('maps 401 login failure to invalid credentials message', () => {
-      const err = { response: { status: 401, data: '' } };
+    it('maps 401 with invalid/credentials detail to invalid credentials message', () => {
+      const err = { response: { status: 401, data: { detail: 'Invalid credentials' } } };
       expect(getLocalizedErrorMessage(err, 'en')).toBe('Incorrect email or password.');
       expect(getLocalizedErrorMessage(err, 'ar')).toBe('البريد الإلكتروني أو كلمة المرور غير صحيحة.');
+    });
+
+    it('maps 401 without credentials detail to session expired message', () => {
+      const err = { response: { status: 401, data: '' } };
+      expect(getLocalizedErrorMessage(err, 'en')).toBe('Your session has expired. Please sign in again.');
+      expect(getLocalizedErrorMessage(err, 'ar')).toBe('انتهت الجلسة. من فضلك سجّل الدخول مرة أخرى.');
     });
 
     it('maps 409 duplicate email to email already registered', () => {

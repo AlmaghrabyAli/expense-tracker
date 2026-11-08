@@ -12,8 +12,8 @@ export default function CategoryRow({
   const { t, i18n } = useTranslation();
   const lang = i18n.language;
 
-  const displayName = getCategoryDisplayName(category.name, lang);
-  const initial = getCategoryInitial(category.name, lang);
+  const displayName = getCategoryDisplayName(category, lang);
+  const initial = getCategoryInitial(category, lang);
   const color = category.color || '#10B981';
   const isDefault = Boolean(category.isDefault);
 

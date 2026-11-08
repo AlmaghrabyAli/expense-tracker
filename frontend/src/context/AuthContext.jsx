@@ -9,6 +9,8 @@ export const AuthContext = createContext(null);
 
 export function AuthProvider({ children }) {
   const { t } = useTranslation();
+  const tRef = useRef(t);
+  useEffect(() => { tRef.current = t; }, [t]);
   const queryClient = useQueryClient();
   const [user, setUser] = useState(null);
   const [token, setToken] = useState(null);
@@ -44,15 +46,15 @@ export function AuthProvider({ children }) {
     const timeUntilExpiry = new Date(expirationTime).getTime() - Date.now();
     if (timeUntilExpiry <= 0) {
       clearSession();
-      toast.error(t('errors.sessionExpired'), { id: 'session-expired' });
+      toast.error(tRef.current('errors.sessionExpired'), { id: 'session-expired' });
       return;
     }
 
     timerRef.current = setTimeout(() => {
       clearSession();
-      toast.error(t('errors.sessionExpired'), { id: 'session-expired' });
+      toast.error(tRef.current('errors.sessionExpired'), { id: 'session-expired' });
     }, timeUntilExpiry);
-  }, [clearSession, t]);
+  }, [clearSession]);
 
   const saveSession = useCallback((newToken, newExpiresAt, newUser) => {
     try {
@@ -124,12 +126,12 @@ export function AuthProvider({ children }) {
   useEffect(() => {
     const handleExpired = () => {
       clearSession();
-      toast.error(t('errors.sessionExpired'), { id: 'session-expired' });
+      toast.error(tRef.current('errors.sessionExpired'), { id: 'session-expired' });
     };
 
     window.addEventListener('et:session-expired', handleExpired);
     return () => window.removeEventListener('et:session-expired', handleExpired);
-  }, [clearSession, t]);
+  }, [clearSession]);
 
   const login = async (firstArg, secondArg) => {
     const payload =

@@ -58,7 +58,7 @@ export default function CategoryFormModal({
     if (!trimmedName) {
       setError('name', {
         type: 'manual',
-        message: t('validation.required', 'This field is required'),
+        message: t('validation.required'),
       });
       return;
     }
@@ -74,7 +74,7 @@ export default function CategoryFormModal({
     if (!color || !/^#[0-9A-Fa-f]{6}$/.test(color)) {
       setError('color', {
         type: 'manual',
-        message: t('validation.invalidColor', 'Color must be a valid hex code #RRGGBB'),
+        message: t('validation.invalidColor'),
       });
       return;
     }
@@ -124,7 +124,7 @@ export default function CategoryFormModal({
             maxLength={50}
             error={errors.name?.message}
             {...register('name', {
-              required: t('validation.required', 'This field is required'),
+              required: t('validation.required'),
               maxLength: {
                 value: 50,
                 message: t('validation.maxLength', { max: 50 }),

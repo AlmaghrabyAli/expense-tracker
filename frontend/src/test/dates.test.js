@@ -101,5 +101,17 @@ describe('utils/dates', () => {
       expect(prev.fromDate).toBe('2026-10-01');
       expect(prev.toDate).toBe('2026-10-31');
     });
+
+    it('THIS_MONTH with 2026-11-01..2026-11-30 gives 2026-10-01..2026-10-31', () => {
+      const prev = getPreviousPeriodDates('2026-11-01', '2026-11-30', DATE_PRESETS.THIS_MONTH);
+      expect(prev.fromDate).toBe('2026-10-01');
+      expect(prev.toDate).toBe('2026-10-31');
+    });
+
+    it('THIS_YEAR gives the previous calendar year', () => {
+      const prev = getPreviousPeriodDates('2026-01-01', '2026-12-31', DATE_PRESETS.THIS_YEAR);
+      expect(prev.fromDate).toBe('2025-01-01');
+      expect(prev.toDate).toBe('2025-12-31');
+    });
   });
 });

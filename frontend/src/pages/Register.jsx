@@ -85,14 +85,14 @@ export default function Register() {
               prefix={<User className="h-4 w-4 text-slate-400" />}
               error={errors.fullName?.message}
               {...register('fullName', {
-                required: t('validation.required', 'This field is required'),
+                required: t('validation.required'),
                 minLength: {
                   value: 2,
-                  message: t('validation.nameLength', 'Full name must be between 2 and 100 characters'),
+                  message: t('validation.nameLength'),
                 },
                 maxLength: {
                   value: 100,
-                  message: t('validation.nameLength', 'Full name must be between 2 and 100 characters'),
+                  message: t('validation.nameLength'),
                 },
               })}
             />
@@ -111,10 +111,10 @@ export default function Register() {
               prefix={<Mail className="h-4 w-4 text-slate-400" />}
               error={errors.email?.message}
               {...register('email', {
-                required: t('validation.required', 'This field is required'),
+                required: t('validation.required'),
                 pattern: {
                   value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
-                  message: t('validation.emailInvalid', 'Please enter a valid email address'),
+                  message: t('validation.emailInvalid'),
                 },
               })}
             />
@@ -139,14 +139,14 @@ export default function Register() {
                 prefix={<Lock className="h-4 w-4 text-slate-400" />}
                 error={errors.password?.message}
                 {...register('password', {
-                  required: t('validation.required', 'This field is required'),
+                  required: t('validation.required'),
                   minLength: {
                     value: 8,
-                    message: t('validation.passwordLength', 'Password must be between 8 and 72 characters'),
+                    message: t('validation.passwordLength'),
                   },
                   maxLength: {
                     value: 72,
-                    message: t('validation.passwordLength', 'Password must be between 8 and 72 characters'),
+                    message: t('validation.passwordLength'),
                   },
                 })}
               />

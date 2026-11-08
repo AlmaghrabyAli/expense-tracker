@@ -104,7 +104,7 @@ export default function FilterBar({
               <option value="">{t('transactions.allCategories')}</option>
               {categories.map((cat) => (
                 <option key={cat.id} value={cat.id}>
-                  {getCategoryDisplayName(cat.name, lang)} ({cat.type === 'Income' ? t('common.income') : t('common.expense')})
+                  {getCategoryDisplayName(cat, lang)} ({cat.type === 'Income' ? t('common.income') : t('common.expense')})
                 </option>
               ))}
             </select>

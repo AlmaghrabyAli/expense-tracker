@@ -36,6 +36,7 @@ describe('utils/format', () => {
     it('formats date in English as dd MMM yyyy', () => {
       expect(formatDate('2026-11-03', 'en')).toBe('03 Nov 2026');
       expect(formatDate('2026-01-15', 'en')).toBe('15 Jan 2026');
+      expect(formatDate('2026-09-03', 'en')).toBe('03 Sep 2026');
     });
 
     it('formats date in Arabic with Arabic month names and Western digits', () => {

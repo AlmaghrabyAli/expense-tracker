@@ -49,8 +49,12 @@ export default function DateRangeSelector({
 
   const handleCustomApply = (e) => {
     e.preventDefault();
-    if (customFrom && customTo && customFrom > customTo) {
-      setDateError(t('validation.dateFromAfterTo', 'Start date cannot be after end date'));
+    if (!customFrom || !customTo) {
+      setDateError(t('validation.bothDatesRequired'));
+      return;
+    }
+    if (customFrom > customTo) {
+      setDateError(t('validation.dateFromAfterTo'));
       return;
     }
     setDateError('');
@@ -71,6 +75,7 @@ export default function DateRangeSelector({
               key={opt.key}
               type="button"
               onClick={() => handleSelect(opt.key)}
+              aria-pressed={isActive}
               className={`rounded-lg px-3 py-1.5 text-xs font-semibold whitespace-nowrap shrink-0 transition-all duration-200 ${
                 isActive
                   ? 'bg-white text-slate-900 shadow-sm'

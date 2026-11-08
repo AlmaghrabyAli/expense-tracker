@@ -53,14 +53,19 @@ export default function TransactionFormModal({
   // Reset or populate form on open / initialData change
   useEffect(() => {
     if (isOpen) {
-      if (initialData) {
-        setValue('type', initialData.type || 'Expense');
-        setValue('categoryId', String(initialData.categoryId || ''));
-        setValue('amount', String(initialData.amount || ''));
-        setValue('date', initialData.date ? initialData.date.slice(0, 10) : formatLocalDate(new Date()));
-        setValue('note', initialData.note || '');
+      if (isEdit) {
+        // Edit mode: reset with all fields atomically to clear stale errors
+        const editType = initialData.type || 'Expense';
+        reset({
+          type: editType,
+          categoryId: String(initialData.categoryId || ''),
+          amount: String(initialData.amount || ''),
+          date: initialData.date ? initialData.date.slice(0, 10) : formatLocalDate(new Date()),
+          note: initialData.note || '',
+        });
       } else {
-        const defaultType = 'Expense';
+        // Add mode: preselect first category of the given type
+        const defaultType = initialData?.type || 'Expense';
         const matching = categories.filter((c) => c.type === defaultType);
         reset({
           type: defaultType,
@@ -71,7 +76,7 @@ export default function TransactionFormModal({
         });
       }
     }
-  }, [isOpen, initialData, categories, setValue, reset]);
+  }, [isOpen, initialData, isEdit, categories, reset]);
 
   // When type changes, ensure categoryId belongs to that type
   const handleTypeChange = (newType) => {
@@ -90,7 +95,7 @@ export default function TransactionFormModal({
     if (!rawAmount) {
       setError('amount', {
         type: 'manual',
-        message: t('validation.required', 'This field is required'),
+        message: t('validation.required'),
       });
       return;
     }
@@ -98,7 +103,7 @@ export default function TransactionFormModal({
     if (!/^\d+(\.\d{1,2})?$/.test(rawAmount)) {
       setError('amount', {
         type: 'manual',
-        message: t('validation.amountDecimals', 'Amount must have at most 2 decimal places'),
+        message: t('validation.amountDecimals'),
       });
       return;
     }
@@ -107,7 +112,15 @@ export default function TransactionFormModal({
     if (isNaN(parsedAmount) || parsedAmount <= 0) {
       setError('amount', {
         type: 'manual',
-        message: t('validation.amountPositive', 'Amount must be greater than zero'),
+        message: t('validation.amountPositive'),
+      });
+      return;
+    }
+
+    if (parsedAmount > 999999999.99) {
+      setError('amount', {
+        type: 'manual',
+        message: t('validation.amountMax'),
       });
       return;
     }
@@ -115,7 +128,7 @@ export default function TransactionFormModal({
     if (!data.categoryId) {
       setError('categoryId', {
         type: 'manual',
-        message: t('validation.categoryRequired', 'Please select a category'),
+        message: t('validation.categoryRequired'),
       });
       return;
     }
@@ -123,7 +136,7 @@ export default function TransactionFormModal({
     if (!data.date) {
       setError('date', {
         type: 'manual',
-        message: t('validation.required', 'This field is required'),
+        message: t('validation.required'),
       });
       return;
     }
@@ -184,14 +197,14 @@ export default function TransactionFormModal({
           </label>
           <Select
             {...register('categoryId', {
-              required: t('validation.categoryRequired', 'Please select a category'),
+              required: t('validation.categoryRequired'),
             })}
             error={errors.categoryId?.message}
           >
             <option value="">{t('transactions.selectCategory')}</option>
             {availableCategories.map((cat) => (
               <option key={cat.id} value={cat.id}>
-                {getCategoryDisplayName(cat.name, lang)}
+                {getCategoryDisplayName(cat, lang)}
               </option>
             ))}
           </Select>
@@ -209,7 +222,7 @@ export default function TransactionFormModal({
             prefix={lang === 'ar' ? 'ج.م' : 'EGP'}
             error={errors.amount?.message}
             {...register('amount', {
-              required: t('validation.required', 'This field is required'),
+              required: t('validation.required'),
             })}
           />
         </div>
@@ -223,7 +236,7 @@ export default function TransactionFormModal({
             type="date"
             error={errors.date?.message}
             {...register('date', {
-              required: t('validation.required', 'This field is required'),
+              required: t('validation.required'),
             })}
           />
         </div>

@@ -50,41 +50,15 @@ export function formatDate(dateStr, lang = 'en') {
     }).format(date);
   }
 
-  return new Intl.DateTimeFormat('en-GB', {
+  const parts = new Intl.DateTimeFormat('en-US', {
     day: '2-digit',
     month: 'short',
     year: 'numeric',
-  }).format(date);
-}
-
-/**
- * Relative date description (Today, Yesterday, or formatted date).
- */
-export function formatRelativeDate(dateStr, lang = 'en') {
-  if (!dateStr) return '';
-  const date = parseLocalDate(dateStr);
-  const now = new Date();
-  
-  const isToday =
-    date.getDate() === now.getDate() &&
-    date.getMonth() === now.getMonth() &&
-    date.getFullYear() === now.getFullYear();
-
-  const yesterday = new Date(now);
-  yesterday.setDate(yesterday.getDate() - 1);
-  const isYesterday =
-    date.getDate() === yesterday.getDate() &&
-    date.getMonth() === yesterday.getMonth() &&
-    date.getFullYear() === yesterday.getFullYear();
-
-  if (isToday) {
-    return lang === 'ar' ? 'اليوم' : 'Today';
-  }
-  if (isYesterday) {
-    return lang === 'ar' ? 'أمس' : 'Yesterday';
-  }
-
-  return formatDate(dateStr, lang);
+  }).formatToParts(date);
+  const day = parts.find((p) => p.type === 'day')?.value || '';
+  const month = parts.find((p) => p.type === 'month')?.value || '';
+  const year = parts.find((p) => p.type === 'year')?.value || '';
+  return `${day} ${month} ${year}`;
 }
 
 /**

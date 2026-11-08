@@ -215,7 +215,32 @@
     "categoryRequired": "يرجى اختيار الفئة.",
     "dateRequired": "يرجى تحديد التاريخ.",
     "colorRequired": "يجب أن يكون اللون كود سداسي عشري صحيح (#RRGGBB).",
-    "nameRequired": "اسم الفئة مطلوب (من 1 إلى 50 حرفًا)."
+    "nameRequired": "اسم الفئة مطلوب (من 1 إلى 50 حرفًا).",
+    "pageNotFound": "الصفحة غير موجودة",
+    "pageNotFoundDesc": "الصفحة التي تبحث عنها غير موجودة أو تم نقلها.",
+    "backToDashboard": "العودة إلى لوحة التحكم"
+  },
+  "messages": {
+    "transactionCreated": "تمت إضافة المعاملة بنجاح",
+    "transactionUpdated": "تم تعديل المعاملة بنجاح",
+    "transactionDeleted": "تم حذف المعاملة بنجاح",
+    "categoryCreated": "تم إنشاء الفئة بنجاح",
+    "categoryUpdated": "تم تعديل الفئة بنجاح",
+    "categoryDeleted": "تم حذف الفئة بنجاح"
+  },
+  "validation": {
+    "required": "هذا الحقل مطلوب",
+    "maxLength": "الحد الأقصى {{max}} حرفًا",
+    "invalidColor": "يجب أن يكون اللون رمز هيكس صالح #RRGGBB",
+    "dateFromAfterTo": "تاريخ البدء لا يمكن أن يكون بعد تاريخ الانتهاء",
+    "bothDatesRequired": "تاريخا البدء والانتهاء مطلوبان معًا",
+    "amountDecimals": "المبلغ يجب ألا يتجاوز خانتين عشريتين",
+    "amountPositive": "المبلغ يجب أن يكون أكبر من صفر",
+    "amountMax": "المبلغ لا يمكن أن يتجاوز 999,999,999.99",
+    "categoryRequired": "يرجى اختيار فئة",
+    "emailInvalid": "يرجى إدخال بريد إلكتروني صالح",
+    "passwordLength": "كلمة المرور يجب أن تكون بين 8 و 72 حرفًا",
+    "nameLength": "الاسم الكامل يجب أن يكون بين 2 و 100 حرف"
   },
   "toasts": {
     "transactionCreated": "تمت إضافة المعاملة بنجاح.",

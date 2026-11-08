@@ -3,22 +3,41 @@ import { DEFAULT_CATEGORIES } from './constants';
 /**
  * Returns the localized category display name.
  * Rule (Contract 8.1):
- * - Default categories (isDefault: true or matching default list) are translated to Arabic when lang === 'ar'.
+ * - Default categories (isDefault: true or matching default list by id) are translated to Arabic when lang === 'ar'.
  * - Custom categories (isDefault: false) are ALWAYS shown exactly as the user typed them in both languages.
- * Accepts either a category object ({ name, isDefault, type }) or a raw string name.
+ * Accepts:
+ *   - a category object ({ id?, name?, categoryName?, isDefault? })
+ *   - a raw string name
+ *   - a numeric categoryId
  */
 export function getCategoryDisplayName(category, lang = 'en') {
   if (!category) return '';
-  const rawName = typeof category === 'string' ? category : (category.name || category.categoryName || '');
+
+  // Numeric id passed directly
+  if (typeof category === 'number') {
+    const match = DEFAULT_CATEGORIES.find((dc) => dc.id === category);
+    if (!match) return '';
+    if (lang === 'ar' && match.arLabel) return match.arLabel;
+    return match.name;
+  }
+
+  const rawName = typeof category === 'string'
+    ? category
+    : (category.name || category.categoryName || '');
+
   const isExplicitlyCustom = typeof category === 'object' && category.isDefault === false;
 
   if (lang === 'ar' && !isExplicitlyCustom) {
-    const match = DEFAULT_CATEGORIES.find(
+    // Try match by id first (most reliable)
+    if (typeof category === 'object' && category.id) {
+      const idMatch = DEFAULT_CATEGORIES.find((dc) => dc.id === category.id);
+      if (idMatch?.arLabel) return idMatch.arLabel;
+    }
+    // Fallback: match by name
+    const nameMatch = DEFAULT_CATEGORIES.find(
       (dc) => dc.name.toLowerCase() === rawName.toLowerCase()
     );
-    if (match && match.arLabel) {
-      return match.arLabel;
-    }
+    if (nameMatch?.arLabel) return nameMatch.arLabel;
   }
 
   return rawName;

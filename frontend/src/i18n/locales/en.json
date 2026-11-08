@@ -215,7 +215,32 @@
     "categoryRequired": "Category is required.",
     "dateRequired": "Date is required.",
     "colorRequired": "Color must be a valid hex code (#RRGGBB).",
-    "nameRequired": "Name is required (1 to 50 characters)."
+    "nameRequired": "Name is required (1 to 50 characters).",
+    "pageNotFound": "Page not found",
+    "pageNotFoundDesc": "The page you are looking for does not exist or has been moved.",
+    "backToDashboard": "Back to dashboard"
+  },
+  "messages": {
+    "transactionCreated": "Transaction added successfully",
+    "transactionUpdated": "Transaction updated successfully",
+    "transactionDeleted": "Transaction deleted successfully",
+    "categoryCreated": "Category created successfully",
+    "categoryUpdated": "Category updated successfully",
+    "categoryDeleted": "Category deleted successfully"
+  },
+  "validation": {
+    "required": "This field is required",
+    "maxLength": "Maximum length is {{max}} characters",
+    "invalidColor": "Color must be a valid hex code #RRGGBB",
+    "dateFromAfterTo": "Start date cannot be after end date",
+    "bothDatesRequired": "Both start and end dates are required",
+    "amountDecimals": "Amount must have at most 2 decimal places",
+    "amountPositive": "Amount must be greater than zero",
+    "amountMax": "Amount cannot exceed 999,999,999.99",
+    "categoryRequired": "Please select a category",
+    "emailInvalid": "Please enter a valid email address",
+    "passwordLength": "Password must be between 8 and 72 characters",
+    "nameLength": "Full name must be between 2 and 100 characters"
   },
   "toasts": {
     "transactionCreated": "Transaction added successfully.",

@@ -1,6 +1,5 @@
 import React, { useState, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import toast from 'react-hot-toast';
 import HeroBalanceCard from '../components/dashboard/HeroBalanceCard';
 import StatCard from '../components/dashboard/StatCard';
 import DateRangeSelector from '../components/dashboard/DateRangeSelector';
@@ -8,18 +7,18 @@ import RecentTransactions from '../components/dashboard/RecentTransactions';
 import ExpenseDonut from '../components/charts/ExpenseDonut';
 import MonthlyBars from '../components/charts/MonthlyBars';
 import TransactionFormModal from '../components/transactions/TransactionFormModal';
+import ErrorState from '../components/ui/ErrorState';
 import { useAuth } from '../context/AuthContext';
 import { useSummary, useByCategory, useMonthly } from '../hooks/useReports';
 import { useTransactions, useCreateTransaction } from '../hooks/useTransactions';
 import { useCategories } from '../hooks/useCategories';
 import { PRESETS } from '../utils/constants';
-import { getPresetDates, getPreviousPeriodDates } from '../utils/dates';
+import { getPresetDates, getPreviousPeriodDates, parseLocalDate, formatLocalDate } from '../utils/dates';
 import { calculatePeriodChange, formatMoney } from '../utils/format';
 import { getApiErrorMessage } from '../utils/errors';
 
 export default function Dashboard() {
-  const { t, i18n } = useTranslation();
-  const lang = i18n.language;
+  const { t } = useTranslation();
   const { user } = useAuth();
 
   // Preset Date range state
@@ -32,12 +31,13 @@ export default function Dashboard() {
 
   // Calculate previous period for trends
   const prevPeriod = useMemo(() => {
-    return getPreviousPeriodDates(dateRange.fromDate, dateRange.toDate);
-  }, [dateRange.fromDate, dateRange.toDate]);
+    return getPreviousPeriodDates(dateRange.fromDate, dateRange.toDate, dateRange.preset);
+  }, [dateRange.fromDate, dateRange.toDate, dateRange.preset]);
 
-  // Current year for monthly chart
+  // Current year for monthly chart (safe local-date parsing to avoid UTC shift)
   const currentYear = useMemo(() => {
-    return new Date(dateRange.toDate || new Date()).getFullYear();
+    const toStr = dateRange.toDate || formatLocalDate(new Date());
+    return parseLocalDate(toStr).getFullYear();
   }, [dateRange.toDate]);
 
   // Queries
@@ -50,31 +50,32 @@ export default function Dashboard() {
 
   const {
     data: prevSummaryData,
-    isLoading: isPrevLoading,
   } = useSummary(prevPeriod.fromDate, prevPeriod.toDate);
 
   const {
     data: categoryBreakdown,
     isLoading: isCategoryLoading,
-  } = useByCategory({
-    fromDate: dateRange.fromDate,
-    toDate: dateRange.toDate,
-    type: 'Expense',
-  });
+    error: categoryError,
+    refetch: refetchCategory,
+  } = useByCategory('Expense', dateRange.fromDate, dateRange.toDate);
 
   const {
     data: monthlyData,
     isLoading: isMonthlyLoading,
+    error: monthlyError,
+    refetch: refetchMonthly,
   } = useMonthly(currentYear);
 
   const {
     data: recentTxData,
     isLoading: isRecentLoading,
+    error: recentError,
+    refetch: refetchRecent,
   } = useTransactions({
     page: 1,
     pageSize: 5,
     sortBy: 'date',
-    sortOrder: 'desc',
+    sortDir: 'desc',
   });
 
   const { data: categories = [] } = useCategories();
@@ -101,7 +102,7 @@ export default function Dashboard() {
   // Income burn rate: expense / income * 100
   const burnRate = totalIncome > 0
     ? `${Math.round((totalExpense / totalIncome) * 100)}%`
-    : '0%';
+    : '-';
 
   const handleOpenAddModal = (type = 'Expense') => {
     setModalServerError('');
@@ -113,7 +114,6 @@ export default function Dashboard() {
     setModalServerError('');
     try {
       await createTxMutation.mutateAsync(payload);
-      toast.success(t('messages.transactionCreated', 'Transaction added successfully'));
       setIsModalOpen(false);
     } catch (err) {
       const msg = getApiErrorMessage(err, lang);
@@ -121,7 +121,7 @@ export default function Dashboard() {
     }
   };
 
-  // Time of day greeting
+  // Time of day greeting — first word of fullName only
   const hour = new Date().getHours();
   const greetingKey =
     hour < 12
@@ -136,7 +136,7 @@ export default function Dashboard() {
         <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
           <div>
             <h1 className="text-xl sm:text-2xl font-bold tracking-tight text-slate-900">
-              {t(greetingKey, { name: user?.fullName || 'User' })}
+              {t(greetingKey, { name: (user?.fullName || 'User').split(' ')[0] })}
             </h1>
             <p className="text-xs text-slate-500 mt-0.5">
               {t('dashboard.subtitle')}
@@ -150,15 +150,19 @@ export default function Dashboard() {
         </div>
 
         {/* Hero Balance Card */}
-        <HeroBalanceCard
-          balance={balance}
-          income={totalIncome}
-          expense={totalExpense}
-          periodChange={balanceChange}
-          isLoading={isSummaryLoading}
-          onAddIncome={() => handleOpenAddModal('Income')}
-          onAddExpense={() => handleOpenAddModal('Expense')}
-        />
+        {summaryError ? (
+          <ErrorState onRetry={refetchSummary} />
+        ) : (
+          <HeroBalanceCard
+            balance={balance}
+            income={totalIncome}
+            expense={totalExpense}
+            periodChange={balanceChange}
+            isLoading={isSummaryLoading}
+            onAddIncome={() => handleOpenAddModal('Income')}
+            onAddExpense={() => handleOpenAddModal('Expense')}
+          />
+        )}
 
         {/* 3 Metric Stat Cards */}
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
@@ -190,27 +194,39 @@ export default function Dashboard() {
         {/* Charts Row: Donut + Monthly Bars */}
         <div className="grid grid-cols-1 gap-6 lg:grid-cols-12">
           <div className="lg:col-span-5">
-            <ExpenseDonut
-              data={categoryBreakdown || []}
-              isLoading={isCategoryLoading}
-            />
+            {categoryError ? (
+              <ErrorState onRetry={refetchCategory} />
+            ) : (
+              <ExpenseDonut
+                data={categoryBreakdown || []}
+                isLoading={isCategoryLoading}
+              />
+            )}
           </div>
 
           <div className="lg:col-span-7">
-            <MonthlyBars
-              data={monthlyData || []}
-              year={currentYear}
-              isLoading={isMonthlyLoading}
-            />
+            {monthlyError ? (
+              <ErrorState onRetry={refetchMonthly} />
+            ) : (
+              <MonthlyBars
+                data={monthlyData || []}
+                year={currentYear}
+                isLoading={isMonthlyLoading}
+              />
+            )}
           </div>
         </div>
 
         {/* Recent Transactions List */}
-        <RecentTransactions
-          transactions={recentTxData?.items || []}
-          isLoading={isRecentLoading}
-          onAddTransaction={() => handleOpenAddModal('Expense')}
-        />
+        {recentError ? (
+          <ErrorState onRetry={refetchRecent} />
+        ) : (
+          <RecentTransactions
+            transactions={recentTxData?.items || []}
+            isLoading={isRecentLoading}
+            onAddTransaction={() => handleOpenAddModal('Expense')}
+          />
+        )}
 
         {/* Transaction Modal */}
         <TransactionFormModal

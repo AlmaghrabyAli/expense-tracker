@@ -13,7 +13,12 @@ export function ExpenseDonut({ data = [], total = 0, isLoading = false }) {
 
   const chartData = (data || []).map((item) => ({
     ...item,
-    displayName: getCategoryDisplayName(item.categoryName || item.name || item, lang),
+    displayName: getCategoryDisplayName(
+      typeof item === 'object'
+        ? { id: item.categoryId || item.id, name: item.categoryName || item.name, isDefault: item.isDefault }
+        : item,
+      lang
+    ),
   }));
 
   const CustomTooltip = ({ active, payload }) => {
@@ -60,7 +65,7 @@ export function ExpenseDonut({ data = [], total = 0, isLoading = false }) {
           <div className="w-16 h-16 rounded-full border-4 border-dashed border-slate-200 flex items-center justify-center mb-3">
             <span className="text-xs font-bold text-slate-400">0%</span>
           </div>
-          <p className="text-xs font-medium text-slate-500">{t('common.noData', 'No expense data')}</p>
+          <p className="text-xs font-medium text-slate-500">{t('common.noData')}</p>
         </div>
       ) : (
         <div className="flex flex-col sm:flex-row items-center gap-6 py-2">

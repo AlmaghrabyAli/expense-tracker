@@ -14,8 +14,9 @@ export default function TransactionCard({
   const lang = i18n.language;
 
   const isIncome = transaction.type === 'Income';
-  const catName = getCategoryDisplayName(transaction.categoryName, lang);
-  const initial = getCategoryInitial(transaction.categoryName, lang);
+  const catObj = { id: transaction.categoryId, name: transaction.categoryName, isDefault: transaction.categoryIsDefault };
+  const catName = getCategoryDisplayName(catObj, lang);
+  const initial = getCategoryInitial(catObj, lang);
   const color = transaction.categoryColor || '#10B981';
 
   return (

@@ -70,7 +70,7 @@ export function getLocalizedErrorMessage(apiError, tOrLang) {
   const lowerDetail = (detail || '').toLowerCase();
 
   // 401 Login
-  if (status === 401 && (lowerDetail.includes('invalid') || lowerDetail.includes('credentials') || !lowerDetail)) {
+  if (status === 401 && (lowerDetail.includes('invalid') || lowerDetail.includes('credentials'))) {
     return translate('errors.invalidCredentials');
   }
 

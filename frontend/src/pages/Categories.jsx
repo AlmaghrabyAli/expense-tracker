@@ -1,12 +1,12 @@
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Plus } from 'lucide-react';
-import toast from 'react-hot-toast';
 import Button from '../components/ui/Button';
 import CategoryRow from '../components/categories/CategoryRow';
 import CategoryFormModal from '../components/categories/CategoryFormModal';
 import ConfirmDialog from '../components/ui/ConfirmDialog';
 import CannotDeleteDialog from '../components/categories/CannotDeleteDialog';
+import ErrorState from '../components/ui/ErrorState';
 import { useCategories, useCreateCategory, useUpdateCategory, useDeleteCategory } from '../hooks/useCategories';
 import { getApiErrorMessage } from '../utils/errors';
 
@@ -14,7 +14,7 @@ export default function Categories() {
   const { t, i18n } = useTranslation();
   const lang = i18n.language;
 
-  const { data: categories = [], isLoading } = useCategories();
+  const { data: categories = [], isLoading, error: catError, refetch: refetchCats } = useCategories();
 
   const createMutation = useCreateCategory();
   const updateMutation = useUpdateCategory();
@@ -54,10 +54,8 @@ export default function Categories() {
           id: selectedCategory.id,
           data: payload,
         });
-        toast.success(t('messages.categoryUpdated', 'Category updated successfully'));
       } else {
         await createMutation.mutateAsync(payload);
-        toast.success(t('messages.categoryCreated', 'Category created successfully'));
       }
       setIsFormOpen(false);
     } catch (err) {
@@ -75,7 +73,6 @@ export default function Categories() {
     setIsDeleting(true);
     try {
       await deleteMutation.mutateAsync(categoryToDelete.id);
-      toast.success(t('messages.categoryDeleted', 'Category deleted successfully'));
       setCategoryToDelete(null);
     } catch (err) {
       // If 409 conflict, show specialized CannotDeleteDialog
@@ -117,66 +114,69 @@ export default function Categories() {
         </div>
 
         {/* Categories Grid (2 Columns: Expense & Income) */}
-        <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
-          {/* Expense Categories Column */}
-          <div className="space-y-3">
-            <div className="flex items-center justify-between border-b border-slate-200/80 pb-2.5">
-              <h2 className="text-sm font-bold text-slate-800">
-                {t('categories.expenseCategories')}
-              </h2>
-              <span className="rounded-full bg-slate-100 px-2.5 py-0.5 text-xs font-semibold text-slate-600">
-                {t('categories.countBadge', { count: expenseCategories.length })}
-              </span>
+        {catError ? (
+          <ErrorState onRetry={refetchCats} />
+        ) : (
+          <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
+            {/* Expense Categories Column */}
+            <div className="space-y-3">
+              <div className="flex items-center justify-between border-b border-slate-200/80 pb-2.5">
+                <h2 className="text-sm font-bold text-slate-800">
+                  {t('categories.expenseCategories')}
+                </h2>
+                <span className="rounded-full bg-slate-100 px-2.5 py-0.5 text-xs font-semibold text-slate-600">
+                  {t('categories.countBadge', { count: expenseCategories.length })}
+                </span>
+              </div>
+
+              <div className="space-y-2.5">
+                {isLoading ? (
+                  Array.from({ length: 6 }).map((_, i) => (
+                    <div key={i} className="h-16 animate-pulse rounded-2xl bg-slate-200" />
+                  ))
+                ) : (
+                  expenseCategories.map((cat) => (
+                    <CategoryRow
+                      key={cat.id}
+                      category={cat}
+                      onEdit={handleOpenEdit}
+                      onDelete={handleOpenDelete}
+                    />
+                  ))
+                )}
+              </div>
             </div>
 
-            <div className="space-y-2.5">
-              {isLoading ? (
-                Array.from({ length: 6 }).map((_, i) => (
-                  <div key={i} className="h-16 animate-pulse rounded-2xl bg-slate-200" />
-                ))
-              ) : (
-                expenseCategories.map((cat) => (
-                  <CategoryRow
-                    key={cat.id}
-                    category={cat}
-                    onEdit={handleOpenEdit}
-                    onDelete={handleOpenDelete}
-                  />
-                ))
-              )}
+            {/* Income Categories Column */}
+            <div className="space-y-3">
+              <div className="flex items-center justify-between border-b border-slate-200/80 pb-2.5">
+                <h2 className="text-sm font-bold text-slate-800">
+                  {t('categories.incomeCategories')}
+                </h2>
+                <span className="rounded-full bg-slate-100 px-2.5 py-0.5 text-xs font-semibold text-slate-600">
+                  {t('categories.countBadge', { count: incomeCategories.length })}
+                </span>
+              </div>
+
+              <div className="space-y-2.5">
+                {isLoading ? (
+                  Array.from({ length: 4 }).map((_, i) => (
+                    <div key={i} className="h-16 animate-pulse rounded-2xl bg-slate-200" />
+                  ))
+                ) : (
+                  incomeCategories.map((cat) => (
+                    <CategoryRow
+                      key={cat.id}
+                      category={cat}
+                      onEdit={handleOpenEdit}
+                      onDelete={handleOpenDelete}
+                    />
+                  ))
+                )}
+              </div>
             </div>
           </div>
-
-          {/* Income Categories Column */}
-          <div className="space-y-3">
-            <div className="flex items-center justify-between border-b border-slate-200/80 pb-2.5">
-              <h2 className="text-sm font-bold text-slate-800">
-                {t('categories.incomeCategories')}
-              </h2>
-              <span className="rounded-full bg-slate-100 px-2.5 py-0.5 text-xs font-semibold text-slate-600">
-                {t('categories.countBadge', { count: incomeCategories.length })}
-              </span>
-            </div>
-
-            <div className="space-y-2.5">
-              {isLoading ? (
-                Array.from({ length: 4 }).map((_, i) => (
-                  <div key={i} className="h-16 animate-pulse rounded-2xl bg-slate-200" />
-                ))
-              ) : (
-                incomeCategories.map((cat) => (
-                  <CategoryRow
-                    key={cat.id}
-                    category={cat}
-                    onEdit={handleOpenEdit}
-                    onDelete={handleOpenDelete}
-                  />
-                ))
-              )}
-            </div>
-          </div>
-        </div>
-
+        )}
         {/* Add/Edit Category Modal */}
         <CategoryFormModal
           isOpen={isFormOpen}

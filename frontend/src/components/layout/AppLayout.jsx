@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { Outlet } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import toast from 'react-hot-toast';
 import { Sidebar } from './Sidebar';
 import { TabletRail } from './TabletRail';
 import { MobileTopBar } from './MobileTopBar';
@@ -32,7 +31,6 @@ export function AppLayout() {
     setServerError('');
     try {
       await createTxMutation.mutateAsync(payload);
-      toast.success(t('messages.transactionCreated', 'Transaction added successfully'));
       setIsAddModalOpen(false);
     } catch (err) {
       setServerError(getApiErrorMessage(err, lang));

@@ -46,9 +46,21 @@ describe('utils/categoryName', () => {
       expect(getCategoryDisplayName(customCat, 'en')).toBe('Gym & Fitness');
       expect(getCategoryDisplayName(customCat, 'ar')).toBe('Gym & Fitness');
 
+      // Regression test: custom category named "Gift" (same name as default id 11) must stay "Gift" in Arabic
+      const customGift = { id: 999, name: 'Gift', type: 'Income', isDefault: false };
+      expect(getCategoryDisplayName(customGift, 'en')).toBe('Gift');
+      expect(getCategoryDisplayName(customGift, 'ar')).toBe('Gift');
+
       const customArabicTyped = { id: 102, name: 'صيانة السيارة', type: 'Expense', isDefault: false };
       expect(getCategoryDisplayName(customArabicTyped, 'en')).toBe('صيانة السيارة');
       expect(getCategoryDisplayName(customArabicTyped, 'ar')).toBe('صيانة السيارة');
+    });
+
+    it('translates default category by id even if only id is passed or object has id 1-12', () => {
+      expect(getCategoryDisplayName(1, 'ar')).toBe('الطعام');
+      expect(getCategoryDisplayName(11, 'ar')).toBe('هدية');
+      expect(getCategoryDisplayName({ id: 1, isDefault: true }, 'ar')).toBe('الطعام');
+      expect(getCategoryDisplayName({ id: 11, name: 'Gift', isDefault: true }, 'ar')).toBe('هدية');
     });
   });
 

@@ -8,7 +8,11 @@ import Toaster from './components/ui/Toaster';
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
-      retry: 1,
+      retry: (failureCount, error) => {
+        const status = error?.response?.status || error?.status;
+        if (status && status >= 400 && status < 500) return false;
+        return failureCount < 1;
+      },
       refetchOnWindowFocus: false,
       staleTime: 30000,
     },
@@ -19,7 +23,7 @@ export default function App() {
   return (
     <QueryClientProvider client={queryClient}>
       <BrowserRouter>
-        <AuthProvider queryClient={queryClient}>
+        <AuthProvider>
           <AppRoutes />
           <Toaster />
         </AuthProvider>

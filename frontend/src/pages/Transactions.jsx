@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { Plus } from 'lucide-react';
-import toast from 'react-hot-toast';
 import Button from '../components/ui/Button';
 import FilterBar from '../components/transactions/FilterBar';
 import TransactionsTable from '../components/transactions/TransactionsTable';
@@ -10,6 +9,7 @@ import TransactionCard from '../components/transactions/TransactionCard';
 import TransactionFormModal from '../components/transactions/TransactionFormModal';
 import ConfirmDialog from '../components/ui/ConfirmDialog';
 import Pagination from '../components/ui/Pagination';
+import ErrorState from '../components/ui/ErrorState';
 import { useTransactions, useCreateTransaction, useUpdateTransaction, useDeleteTransaction } from '../hooks/useTransactions';
 import { useCategories } from '../hooks/useCategories';
 import { useDebounce } from '../hooks/useDebounce';
@@ -59,7 +59,7 @@ export default function Transactions() {
     sortDir: filters.sortOrder || 'desc',
   };
 
-  const { data: txData, isLoading, error } = useTransactions(queryParams);
+  const { data: txData, isLoading, error: txError, refetch: refetchTx } = useTransactions(queryParams);
   const { data: categories = [] } = useCategories();
 
   const createMutation = useCreateTransaction();
@@ -92,10 +92,8 @@ export default function Transactions() {
     try {
       if (selectedTx?.id) {
         await updateMutation.mutateAsync({ id: selectedTx.id, data: payload });
-        toast.success(t('messages.transactionUpdated', 'Transaction updated successfully'));
       } else {
         await createMutation.mutateAsync(payload);
-        toast.success(t('messages.transactionCreated', 'Transaction added successfully'));
       }
       setIsFormOpen(false);
     } catch (err) {
@@ -113,13 +111,10 @@ export default function Transactions() {
     setIsDeleting(true);
     try {
       await deleteMutation.mutateAsync(txToDelete.id);
-      toast.success(t('messages.transactionDeleted', 'Transaction deleted successfully'));
       if (items.length === 1 && filters.page > 1) {
         setFilters((prev) => ({ ...prev, page: prev.page - 1 }));
       }
       setTxToDelete(null);
-    } catch (err) {
-      toast.error(getApiErrorMessage(err, lang));
     } finally {
       setIsDeleting(false);
     }
@@ -191,19 +186,25 @@ export default function Transactions() {
 
         {/* Content View: Desktop Table & Mobile Cards */}
         <div className="hidden md:block">
-          <TransactionsTable
-            transactions={items}
-            sortBy={filters.sortBy}
-            sortOrder={filters.sortOrder}
-            onSort={handleSort}
-            onEdit={handleOpenEdit}
-            onDelete={handleOpenDelete}
-            isLoading={isLoading}
-          />
+          {txError ? (
+            <ErrorState onRetry={refetchTx} />
+          ) : (
+            <TransactionsTable
+              transactions={items}
+              sortBy={filters.sortBy}
+              sortOrder={filters.sortOrder}
+              onSort={handleSort}
+              onEdit={handleOpenEdit}
+              onDelete={handleOpenDelete}
+              isLoading={isLoading}
+            />
+          )}
         </div>
 
         <div className="md:hidden space-y-3">
-          {isLoading ? (
+          {txError ? (
+            <ErrorState onRetry={refetchTx} />
+          ) : isLoading ? (
             Array.from({ length: 4 }).map((_, i) => (
               <div key={i} className="h-28 animate-pulse rounded-2xl bg-slate-200" />
             ))

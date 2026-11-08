@@ -115,8 +115,9 @@ export default function TransactionsTable({
                 ))
               : transactions.map((tx) => {
                   const isIncome = tx.type === 'Income';
-                  const catName = getCategoryDisplayName(tx.categoryName, lang);
-                  const initial = getCategoryInitial(tx.categoryName, lang);
+                  const catObj = { id: tx.categoryId, name: tx.categoryName, isDefault: tx.categoryIsDefault };
+                  const catName = getCategoryDisplayName(catObj, lang);
+                  const initial = getCategoryInitial(catObj, lang);
                   const color = tx.categoryColor || '#10B981';
 
                   return (
