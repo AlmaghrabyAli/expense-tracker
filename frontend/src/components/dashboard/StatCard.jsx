@@ -1,4 +1,3 @@
-import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { ArrowUpRight, ArrowDownRight, TrendingUp, TrendingDown, Percent } from 'lucide-react';
 import { formatMoney, formatPeriodChange } from '../../utils/format';

@@ -1,4 +1,4 @@
-import React from 'react';
+import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
   ResponsiveContainer,
@@ -8,7 +8,6 @@ import {
   YAxis,
   CartesianGrid,
   Tooltip,
-  Legend,
 } from 'recharts';
 import { formatMoney } from '../../utils/format';
 
@@ -52,7 +51,7 @@ export default function MonthlyBars({ data = [], year = new Date().getFullYear()
   const { t, i18n } = useTranslation();
   const isRTL = i18n.language === 'ar';
 
-  const chartData = React.useMemo(() => {
+  const chartData = useMemo(() => {
     // Fill all 12 months if partial
     const map = new Map();
     (data || []).forEach((item) => {
@@ -72,7 +71,7 @@ export default function MonthlyBars({ data = [], year = new Date().getFullYear()
     return months;
   }, [data, t]);
 
-  const hasAnyData = React.useMemo(() => {
+  const hasAnyData = useMemo(() => {
     return chartData.some((d) => d.income > 0 || d.expense > 0);
   }, [chartData]);
 

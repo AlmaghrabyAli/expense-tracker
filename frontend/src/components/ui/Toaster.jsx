@@ -1,4 +1,3 @@
-import React from 'react';
 import { Toaster as HotToaster } from 'react-hot-toast';
 import { useTranslation } from 'react-i18next';
 

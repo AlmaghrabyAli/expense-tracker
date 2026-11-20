@@ -1,4 +1,3 @@
-import React from 'react';
 
 export function Badge({ children, variant = 'neutral', size = 'sm', className = '' }) {
   const variantClasses = {

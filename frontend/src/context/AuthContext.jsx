@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, useEffect, useCallback, useRef } from 'react';
+import { createContext, useContext, useState, useEffect, useCallback, useRef  } from 'react';
 import { useQueryClient } from '@tanstack/react-query';
 import toast from 'react-hot-toast';
 import { useTranslation } from 'react-i18next';
@@ -78,7 +78,6 @@ export function AuthProvider({ children }) {
       try {
         const savedToken = localStorage.getItem(STORAGE_KEYS.TOKEN);
         const savedExpires = localStorage.getItem(STORAGE_KEYS.EXPIRES);
-        const savedUserRaw = localStorage.getItem(STORAGE_KEYS.USER);
 
         if (!savedToken || !savedExpires) {
           if (isMounted) setIsLoading(false);

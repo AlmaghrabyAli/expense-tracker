@@ -40,6 +40,4 @@ export const DATE_PRESETS = {
   CUSTOM: 'custom',
 };
 
-export const PRESETS = DATE_PRESETS;
-export const DEFAULT_PRESET_COLORS = PRESET_COLORS;
 

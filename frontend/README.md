@@ -9,22 +9,32 @@ A bilingual (English LTR / Arabic RTL) personal finance web application calibrat
 - **State & Data Fetching**: TanStack React Query v5 + Axios
 - **Forms**: React Hook Form
 - **Data Visualization**: Recharts
-- **Internationalization**: i18next + react-i18next
+- **Internationalization**: i18next + react-i18next (English LTR / Arabic RTL with Cairo font)
 - **Icons**: Lucide React
+- **Linting**: ESLint 9 (Flat Config)
 - **Testing**: Vitest + Testing Library + jsdom
 
-## Requirement
+## Backend Requirement & Configuration
 
 The ASP.NET Core backend must be running before using the application. By default, the frontend expects the backend at `https://localhost:7105`.
 
-## Environment Variable
+### Environment Variable
 
-Create a `.env` file in the project root:
+Configure the backend URL in a `.env` file in the project root:
 
 ```env
 # Base URL of the ASP.NET Core backend API
 VITE_API_URL=https://localhost:7105
 ```
+
+## Pages
+
+1. **Dashboard** (`/`): Balance overview, period comparison trends, income/expense metrics, category breakdown donut chart, 12-month inflow/outflow bar chart, and recent transactions.
+2. **Transactions** (`/transactions`): Paginated table (desktop) and card view (mobile), type/category/date filtering, note keyword search with debounce, sorting, and create/edit/delete modals.
+3. **Categories** (`/categories`): 12 locked default categories with Arabic translations, custom category management with color picker, and 409 conflict protection when linked transactions exist.
+4. **Login** (`/login`): Authentication with email and password, error banners, and token storage.
+5. **Register** (`/register`): User registration with duplicate email validation.
+6. **404 Not Found** (`*`): Clean fallback screen with navigation back to the dashboard.
 
 ## Folder Structure
 
@@ -32,9 +42,9 @@ VITE_API_URL=https://localhost:7105
 ├── .env.example
 ├── .gitignore
 ├── README.md
+├── eslint.config.js
 ├── index.html
 ├── package.json
-├── tsconfig.json
 ├── vite.config.js
 ├── public/
 │   └── favicon.svg
@@ -83,10 +93,13 @@ VITE_API_URL=https://localhost:7105
     │   ├── categoryName.test.js
     │   ├── components.test.jsx
     │   ├── dates.test.js
+    │   ├── datesSingleDay.test.js
     │   ├── errors.test.js
     │   ├── format.test.js
     │   ├── i18n.test.js
-    │   └── setup.js
+    │   ├── reports.test.js
+    │   ├── setup.js
+    │   └── uiImprovements.test.jsx
     └── utils/
         ├── categoryName.js
         ├── constants.js
@@ -94,15 +107,6 @@ VITE_API_URL=https://localhost:7105
         ├── errors.js
         └── format.js
 ```
-
-## Pages
-
-1. **Dashboard** (`/`): Balance overview, period comparison trends, income/expense metrics, category breakdown donut chart, 12-month inflow/outflow bar chart, and recent transactions.
-2. **Transactions** (`/transactions`): Paginated table (desktop) and card view (mobile), type/category/date filtering, note keyword search with debounce, sorting, and create/edit/delete modals.
-3. **Categories** (`/categories`): 12 locked default categories with Arabic translations, custom category management with color picker, and 409 conflict protection when linked transactions exist.
-4. **Login** (`/login`): Authentication with email and password, error banners, and token storage.
-5. **Register** (`/register`): User registration with duplicate email validation.
-6. **404 Not Found** (`*`): Clean fallback screen with navigation back to the dashboard.
 
 ## Commands
 
@@ -113,11 +117,11 @@ npm install
 # 2. Run local development server (port 5173)
 npm run dev
 
-# 3. Run all unit and component tests
-npm test
-
-# 4. Check TypeScript types and lint
+# 3. Run ESLint (zero errors/warnings)
 npm run lint
+
+# 4. Run all unit and component tests
+npm test
 
 # 5. Build for production
 npm run build

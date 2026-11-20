@@ -1,6 +1,7 @@
-import React, { useState } from 'react';
+import { useState  } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Plus } from 'lucide-react';
+import toast from 'react-hot-toast';
 import Button from '../components/ui/Button';
 import CategoryRow from '../components/categories/CategoryRow';
 import CategoryFormModal from '../components/categories/CategoryFormModal';
@@ -8,7 +9,7 @@ import ConfirmDialog from '../components/ui/ConfirmDialog';
 import CannotDeleteDialog from '../components/categories/CannotDeleteDialog';
 import ErrorState from '../components/ui/ErrorState';
 import { useCategories, useCreateCategory, useUpdateCategory, useDeleteCategory } from '../hooks/useCategories';
-import { getApiErrorMessage } from '../utils/errors';
+import { getLocalizedErrorMessage } from '../utils/errors';
 
 export default function Categories() {
   const { t, i18n } = useTranslation();
@@ -59,7 +60,7 @@ export default function Categories() {
       }
       setIsFormOpen(false);
     } catch (err) {
-      const msg = getApiErrorMessage(err, lang);
+      const msg = getLocalizedErrorMessage(err, lang);
       setModalError(msg);
     }
   };
@@ -81,7 +82,7 @@ export default function Categories() {
         setCategoryToDelete(null);
         setCannotDeleteCat(cat);
       } else {
-        toast.error(getApiErrorMessage(err, lang));
+        toast.error(getLocalizedErrorMessage(err, lang));
       }
     } finally {
       setIsDeleting(false);

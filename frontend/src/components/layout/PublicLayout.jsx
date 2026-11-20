@@ -1,5 +1,3 @@
-import React from 'react';
-import { useTranslation } from 'react-i18next';
 import { LanguageSwitch } from '../ui/LanguageSwitch';
 import { Logo } from '../ui/Logo';
 
@@ -10,8 +8,6 @@ import { Logo } from '../ui/Logo';
  * and a single top header row (Logo at start, Language switcher at end).
  */
 export function PublicLayout({ children }) {
-  const { t } = useTranslation();
-
   return (
     <div className="relative min-h-dvh w-full flex flex-col justify-between overflow-x-hidden bg-[#F8FAFC] selection:bg-[#D1FAE5] selection:text-[#047857]">
       {/* 1. Atmospheric Ambient Glow Mesh */}

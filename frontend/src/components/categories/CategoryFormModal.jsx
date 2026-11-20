@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import { useEffect  } from 'react';
 import { useForm, Controller } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 import Modal from '../ui/Modal';
@@ -6,7 +6,7 @@ import Button from '../ui/Button';
 import Input from '../ui/Input';
 import SegmentedControl from '../ui/SegmentedControl';
 import ColorPicker from '../ui/ColorPicker';
-import { DEFAULT_PRESET_COLORS } from '../../utils/constants';
+import { PRESET_COLORS } from '../../utils/constants';
 
 export default function CategoryFormModal({
   isOpen,
@@ -23,7 +23,6 @@ export default function CategoryFormModal({
     register,
     handleSubmit,
     control,
-    setValue,
     reset,
     setError,
     formState: { errors },
@@ -31,7 +30,7 @@ export default function CategoryFormModal({
     defaultValues: {
       name: '',
       type: 'Expense',
-      color: DEFAULT_PRESET_COLORS[0],
+      color: PRESET_COLORS[0],
     },
   });
 
@@ -41,13 +40,13 @@ export default function CategoryFormModal({
         reset({
           name: initialData.name || '',
           type: initialData.type || 'Expense',
-          color: initialData.color || DEFAULT_PRESET_COLORS[0],
+          color: initialData.color || PRESET_COLORS[0],
         });
       } else {
         reset({
           name: '',
           type: 'Expense',
-          color: DEFAULT_PRESET_COLORS[0],
+          color: PRESET_COLORS[0],
         });
       }
     }

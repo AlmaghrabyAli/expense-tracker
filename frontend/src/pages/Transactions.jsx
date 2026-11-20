@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect  } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { Plus } from 'lucide-react';
@@ -13,7 +13,7 @@ import ErrorState from '../components/ui/ErrorState';
 import { useTransactions, useCreateTransaction, useUpdateTransaction, useDeleteTransaction } from '../hooks/useTransactions';
 import { useCategories } from '../hooks/useCategories';
 import { useDebounce } from '../hooks/useDebounce';
-import { getApiErrorMessage } from '../utils/errors';
+import { getLocalizedErrorMessage } from '../utils/errors';
 
 export default function Transactions() {
   const { t, i18n } = useTranslation();
@@ -97,7 +97,7 @@ export default function Transactions() {
       }
       setIsFormOpen(false);
     } catch (err) {
-      const msg = getApiErrorMessage(err, lang);
+      const msg = getLocalizedErrorMessage(err, lang);
       setModalError(msg);
     }
   };

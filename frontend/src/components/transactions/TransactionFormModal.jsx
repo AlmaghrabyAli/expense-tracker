@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useMemo } from 'react';
 import { useForm } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 import Modal from '../ui/Modal';
@@ -46,7 +46,7 @@ export default function TransactionFormModal({
   const noteValue = watch('note') || '';
 
   // Filter categories by selected transaction type
-  const availableCategories = React.useMemo(() => {
+  const availableCategories = useMemo(() => {
     return categories.filter((c) => c.type === selectedType);
   }, [categories, selectedType]);
 

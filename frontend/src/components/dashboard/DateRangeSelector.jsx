@@ -1,36 +1,36 @@
-import React, { useState } from 'react';
+import { useState  } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Calendar, ChevronDown } from 'lucide-react';
-import { PRESETS } from '../../utils/constants';
+import { Calendar } from 'lucide-react';
+import { DATE_PRESETS } from '../../utils/constants';
 import { getPresetDates } from '../../utils/dates';
 
 export default function DateRangeSelector({
-  value = { preset: PRESETS.THIS_MONTH, fromDate: '', toDate: '' },
+  value = { preset: DATE_PRESETS.THIS_MONTH, fromDate: '', toDate: '' },
   onChange,
 }) {
   const { t } = useTranslation();
-  const [customOpen, setCustomOpen] = useState(value.preset === PRESETS.CUSTOM);
+  const [customOpen, setCustomOpen] = useState(value.preset === DATE_PRESETS.CUSTOM);
   const [customFrom, setCustomFrom] = useState(value.fromDate || '');
   const [customTo, setCustomTo] = useState(value.toDate || '');
   const [dateError, setDateError] = useState('');
 
   const options = [
-    { key: PRESETS.THIS_MONTH, label: t('presets.thisMonth') },
-    { key: PRESETS.LAST_30_DAYS, label: t('presets.last30Days') },
-    { key: PRESETS.THIS_YEAR, label: t('presets.thisYear') },
-    { key: PRESETS.CUSTOM, label: t('presets.custom') },
+    { key: DATE_PRESETS.THIS_MONTH, label: t('presets.thisMonth') },
+    { key: DATE_PRESETS.LAST_30_DAYS, label: t('presets.last30Days') },
+    { key: DATE_PRESETS.THIS_YEAR, label: t('presets.thisYear') },
+    { key: DATE_PRESETS.CUSTOM, label: t('presets.custom') },
   ];
 
   const handleSelect = (key) => {
-    if (key === PRESETS.CUSTOM) {
+    if (key === DATE_PRESETS.CUSTOM) {
       setCustomOpen(true);
-      const defaults = getPresetDates(PRESETS.THIS_MONTH);
+      const defaults = getPresetDates(DATE_PRESETS.THIS_MONTH);
       const nextFrom = customFrom || defaults.fromDate;
       const nextTo = customTo || defaults.toDate;
       setCustomFrom(nextFrom);
       setCustomTo(nextTo);
       onChange?.({
-        preset: PRESETS.CUSTOM,
+        preset: DATE_PRESETS.CUSTOM,
         fromDate: nextFrom,
         toDate: nextTo,
       });
@@ -59,7 +59,7 @@ export default function DateRangeSelector({
     }
     setDateError('');
     onChange?.({
-      preset: PRESETS.CUSTOM,
+      preset: DATE_PRESETS.CUSTOM,
       fromDate: customFrom,
       toDate: customTo,
     });

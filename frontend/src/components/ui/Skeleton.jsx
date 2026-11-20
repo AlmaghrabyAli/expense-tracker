@@ -1,4 +1,3 @@
-import React from 'react';
 
 export function Skeleton({ className = '', variant = 'rect' }) {
   const variantClass = variant === 'circle' ? 'rounded-full' : 'rounded-xl';

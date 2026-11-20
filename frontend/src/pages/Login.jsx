@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState  } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
@@ -8,7 +8,7 @@ import Button from '../components/ui/Button';
 import Input from '../components/ui/Input';
 import Logo from '../components/ui/Logo';
 import { useAuth } from '../context/AuthContext';
-import { getApiErrorMessage } from '../utils/errors';
+import { getLocalizedErrorMessage } from '../utils/errors';
 
 export default function Login() {
   const { t, i18n } = useTranslation();
@@ -42,7 +42,7 @@ export default function Login() {
       await login(data.email.trim(), data.password);
       navigate(from, { replace: true });
     } catch (err) {
-      const msg = getApiErrorMessage(err, lang);
+      const msg = getLocalizedErrorMessage(err, lang);
       setServerError(msg);
     } finally {
       setIsLoading(false);

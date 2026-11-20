@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState  } from 'react';
 import { Outlet } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { Sidebar } from './Sidebar';
@@ -8,10 +8,10 @@ import { MobileDock } from './MobileDock';
 import TransactionFormModal from '../transactions/TransactionFormModal';
 import { useCategories } from '../../hooks/useCategories';
 import { useCreateTransaction } from '../../hooks/useTransactions';
-import { getApiErrorMessage } from '../../utils/errors';
+import { getLocalizedErrorMessage } from '../../utils/errors';
 
 export function AppLayout() {
-  const { t, i18n } = useTranslation();
+  const { i18n } = useTranslation();
   const lang = i18n.language;
 
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
@@ -33,7 +33,7 @@ export function AppLayout() {
       await createTxMutation.mutateAsync(payload);
       setIsAddModalOpen(false);
     } catch (err) {
-      setServerError(getApiErrorMessage(err, lang));
+      setServerError(getLocalizedErrorMessage(err, lang));
     }
   };
 

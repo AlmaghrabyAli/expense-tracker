@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
+import { useState  } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Search, Filter, X, Calendar } from 'lucide-react';
+import { Search, Filter, X } from 'lucide-react';
 import { getCategoryDisplayName } from '../../utils/categoryName';
 
 export default function FilterBar({

@@ -128,4 +128,3 @@ export function getLocalizedErrorMessage(apiError, tOrLang) {
   return translate('errors.generic');
 }
 
-export const getApiErrorMessage = getLocalizedErrorMessage;

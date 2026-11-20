@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import { useState, useMemo  } from 'react';
 import { useTranslation } from 'react-i18next';
 import HeroBalanceCard from '../components/dashboard/HeroBalanceCard';
 import StatCard from '../components/dashboard/StatCard';
@@ -12,19 +12,20 @@ import { useAuth } from '../context/AuthContext';
 import { useSummary, useByCategory, useMonthly } from '../hooks/useReports';
 import { useTransactions, useCreateTransaction } from '../hooks/useTransactions';
 import { useCategories } from '../hooks/useCategories';
-import { PRESETS } from '../utils/constants';
+import { DATE_PRESETS } from '../utils/constants';
 import { getPresetDates, getPreviousPeriodDates, parseLocalDate, formatLocalDate } from '../utils/dates';
-import { calculatePeriodChange, formatMoney } from '../utils/format';
-import { getApiErrorMessage } from '../utils/errors';
+import { calculatePeriodChange } from '../utils/format';
+import { getLocalizedErrorMessage } from '../utils/errors';
 
 export default function Dashboard() {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
+  const lang = i18n.language;
   const { user } = useAuth();
 
   // Preset Date range state
-  const defaultDates = useMemo(() => getPresetDates(PRESETS.THIS_MONTH), []);
+  const defaultDates = useMemo(() => getPresetDates(DATE_PRESETS.THIS_MONTH), []);
   const [dateRange, setDateRange] = useState({
-    preset: PRESETS.THIS_MONTH,
+    preset: DATE_PRESETS.THIS_MONTH,
     fromDate: defaultDates.fromDate,
     toDate: defaultDates.toDate,
   });
@@ -116,7 +117,7 @@ export default function Dashboard() {
       await createTxMutation.mutateAsync(payload);
       setIsModalOpen(false);
     } catch (err) {
-      const msg = getApiErrorMessage(err, lang);
+      const msg = getLocalizedErrorMessage(err, lang);
       setModalServerError(msg);
     }
   };
