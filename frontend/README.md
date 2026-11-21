@@ -87,17 +87,15 @@ The Expense Tracker frontend is a Single Page Application (SPA) built with React
 
 ## Screenshots
 
-> *Screenshots are stored in `../docs/screenshots/` and documented below:*
-
-| View | Screenshot Reference | Description |
-| :--- | :--- | :--- |
-| **Login (English)** | `../docs/screenshots/01-login-en.png` | Centered glass card with ambient glows and floating finance shapes |
-| **Dashboard (English)** | `../docs/screenshots/02-dashboard-en.png` | LTR layout with Hero balance, stat cards, donut chart, and cashflow bars |
-| **Dashboard (Arabic)** | `../docs/screenshots/03-dashboard-ar.png` | RTL layout with Cairo typography, mirrored cards, and localized EGP currency |
-| **Transactions List** | `../docs/screenshots/04-transactions-en.png` | Filter bar, sorting, pagination, and action buttons |
-| **Transaction Modal** | `../docs/screenshots/05-add-transaction-modal.png` | Add/edit modal with segmented type toggle and category dropdown |
-| **Categories Management** | `../docs/screenshots/06-categories-en.png` | Default locked categories and custom color-picked categories |
-| **Mobile View** | `../docs/screenshots/07-mobile-dashboard.png` | Compact mobile layout with bottom navigation dock and quick-add button |
+| View | Preview |
+| :--- | :--- |
+| **Login (English)**<br>_Centered glass card with ambient glows and floating finance shapes_ | ![Login (English)](../docs/screenshots/01-login-en.png) |
+| **Dashboard (English)**<br>_LTR layout with Hero balance, stat cards, donut chart, and cashflow bars_ | ![Dashboard (English)](../docs/screenshots/02-dashboard-en.png) |
+| **Dashboard (Arabic)**<br>_RTL layout with Cairo typography, mirrored cards, and localized EGP currency_ | ![Dashboard (Arabic)](../docs/screenshots/03-dashboard-ar.png) |
+| **Transactions List**<br>_Filter bar, sorting, pagination, and action buttons_ | ![Transactions List](../docs/screenshots/04-transactions-en.png) |
+| **Transaction Modal**<br>_Add/edit modal with segmented type toggle and category dropdown_ | ![Transaction Modal](../docs/screenshots/05-add-transaction-modal.png) |
+| **Categories Management**<br>_Default locked categories and custom color-picked categories_ | ![Categories Management](../docs/screenshots/06-categories-en.png) |
+| **Mobile View**<br>_Compact mobile layout with bottom navigation dock and quick-add button_ | ![Mobile View](../docs/screenshots/07-mobile-dashboard.png) |
 
 ---
 
